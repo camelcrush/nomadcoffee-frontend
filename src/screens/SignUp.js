@@ -2,8 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router";
-import { logUserIn } from "../apollo";
+import { useNavigate } from "react-router";
 import AuthLayout from "../components/auth/AuthLayout";
 import BottomBox from "../components/auth/BottomBox";
 import Button from "../components/auth/Button";
@@ -13,58 +12,61 @@ import Input from "../components/auth/Input";
 import PageTitle from "../components/PageTitle";
 import routes from "../routes";
 
-const LOGIN_MUTATION = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+const CREATE_ACCOUNT_MUTATION = gql`
+  mutation createAccount(
+    $username: String!
+    $password: String!
+    $email: String!
+    $name: String!
+    $location: String
+  ) {
+    createAccount(
+      username: $username
+      password: $password
+      email: $email
+      name: $name
+      location: $location
+    ) {
       ok
-      token
       error
     }
   }
 `;
 
-const Login = () => {
+const SignUp = () => {
+  const navigate = useNavigate();
   const onCompleted = (data) => {
+    const { username, password } = getValues();
     const {
-      login: { ok, token, error },
+      createAccount: { ok, error },
     } = data;
     if (!ok) {
-      return setError("result", {
-        message: error,
-      });
+      return setError("result", { message: error });
     }
-    if (token) {
-      logUserIn(token);
-    }
+    navigate("/", { state: { message: "Plz. Log In", username, password } });
   };
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
     onCompleted,
   });
-  const location = useLocation();
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     setError,
+    getValues,
     clearErrors,
-  } = useForm({
-    mode: "onChange",
-    defaultValues: {
-      username: location?.state?.username,
-      password: location?.state?.password,
-    },
-  });
+  } = useForm({ mode: "onChange" });
   const onValid = (data) => {
     if (loading) {
       return;
     }
-    login({
+    createAccount({
       variables: { ...data },
     });
   };
   return (
     <AuthLayout>
-      <PageTitle title="Log In" />
+      <PageTitle title="Sign Up" />
       <FormBox>
         <div>
           <FontAwesomeIcon icon={faCoffee} size="3x" />
@@ -76,7 +78,6 @@ const Login = () => {
             type="text"
             placeholder="Username"
             onFocus={() => clearErrors()}
-            hasError={Boolean(errors?.username?.message)}
           />
           <FormError message={errors?.username?.message} />
           <Input
@@ -85,24 +86,46 @@ const Login = () => {
             type="password"
             placeholder="Password"
             onFocus={() => clearErrors()}
-            hasError={Boolean(errors?.password?.message)}
           />
           <FormError message={errors?.password?.message} />
+          <Input
+            {...register("email", { required: "Email is required." })}
+            name="email"
+            type="email"
+            placeholder="Email"
+            onFocus={() => clearErrors()}
+          />
+          <FormError message={errors?.email?.message} />
+          <Input
+            {...register("name", { required: "Name is required." })}
+            name="name"
+            type="text"
+            placeholder="Name"
+            onFocus={() => clearErrors()}
+          />
+          <FormError message={errors?.name?.message} />
+          <Input
+            {...register("location")}
+            name="location"
+            type="text"
+            placeholder="Location"
+            onFocus={() => clearErrors()}
+          />
           <Button
             type="submit"
-            value={loading ? "loading..." : "Log in"}
+            value={loading ? "loading..." : "Sign Up"}
             disabled={!isValid || loading}
           />
           <FormError message={errors?.result?.message} />
         </form>
       </FormBox>
       <BottomBox
-        cta="Don't have an account?"
-        link={routes.signUp}
-        text="Sign Up"
+        cta="Do you have an Account ?"
+        link={routes.home}
+        text="Log In"
       />
     </AuthLayout>
   );
 };
 
-export default Login;
+export default SignUp;
