@@ -1,8 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import Button from "../components/auth/Button";
 import FormError from "../components/auth/FormError";
 import Input from "../components/auth/Input";
+import routes from "../routes";
 
 const CREATE_COFFESHOP_MUTATION = gql`
   mutation createCoffeeShop(
@@ -26,6 +28,7 @@ const CREATE_COFFESHOP_MUTATION = gql`
 `;
 
 const AddCoffeeShop = () => {
+  const navigate = useNavigate();
   const onCompleted = (data) => {
     const {
       createCoffeeShop: { ok, error },
@@ -35,6 +38,7 @@ const AddCoffeeShop = () => {
         message: error,
       });
     }
+    navigate(routes.home);
   };
   const [addCoffeeShopMutation, { loading }] = useMutation(
     CREATE_COFFESHOP_MUTATION,
