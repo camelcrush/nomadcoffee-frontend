@@ -1,17 +1,57 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../Avatar";
 
-const Container = styled.div``;
-const Header = styled.div``;
-const Title = styled.span``;
-const Location = styled.span``;
-const UserBox = styled.div``;
-const Username = styled.span``;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+const Header = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  padding: 10px 20px;
+`;
+const TitleBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+const Title = styled.span`
+  font-weight: 600;
+  font-size: 20px;
+`;
+const Location = styled.span`
+  color: gray;
+`;
+const UserBox = styled.div`
+  display: flex;
+  align-items: center;
+`;
+const Username = styled.span`
+  margin-left: 20px;
+`;
 const Photo = styled.img`
   width: 100%;
+  min-width: 500px;
+  min-height: 500px;
+  border: 1px solid ${(props) => props.theme.borderColor};
 `;
-const CategoriesContainer = styled.div``;
-const Category = styled.span``;
+const CategoriesContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid ${(props) => props.theme.borderColor};
+  padding: 10px 20px;
+`;
+const Category = styled.span`
+  color: ${(props) => props.theme.accent};
+`;
 
 const CoffeeShop = ({
   id,
@@ -25,10 +65,14 @@ const CoffeeShop = ({
   return (
     <Container>
       <Header>
-        <Title>{name}</Title>
-        <Location>
-          {latitude} {longitude}
-        </Location>
+        <TitleBox>
+          <Link to={`shop/${id}`}>
+            <Title>{name}</Title>
+          </Link>
+          <Location>
+            Latitude: {latitude}, Logitude: {longitude}
+          </Location>
+        </TitleBox>
         <UserBox>
           <Avatar url={user?.avatarUrl} />
           <Username>{user?.username}</Username>
@@ -36,7 +80,9 @@ const CoffeeShop = ({
       </Header>
       <Photo src={photos[0]?.url} />
       <CategoriesContainer>
-        <Category></Category>
+        <Category>
+          {categories.map((category) => category.name).join(" ")}
+        </Category>
       </CategoriesContainer>
     </Container>
   );

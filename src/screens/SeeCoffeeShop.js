@@ -5,6 +5,7 @@ import Input from "../components/auth/Input";
 import Button from "../components/auth/Button";
 import FormError from "../components/auth/FormError";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 const SEE_COFFEESHOP_QUERY = gql`
   query seeCoffeeShop($id: Int!) {
@@ -58,7 +59,7 @@ const SeeCoffeeShop = () => {
   });
   const onCompleted = (data) => {
     const {
-      createCoffeeShop: { ok, error },
+      editCoffeeShop: { ok, error },
     } = data;
     if (!ok) {
       setError("result", {
@@ -78,7 +79,10 @@ const SeeCoffeeShop = () => {
     formState: { errors, isValid },
     clearErrors,
     setError,
-  } = useForm({ mode: "onChange" });
+    setValue,
+  } = useForm({
+    mode: "onChange",
+  });
   const onValid = (data) => {
     if (loading) {
       return;
@@ -87,6 +91,19 @@ const SeeCoffeeShop = () => {
       variables: { ...data },
     });
   };
+  useEffect(() => {
+    if (data) {
+      setValue("name", data.seeCoffeeShop.name || "");
+      setValue("latitude", data.seeCoffeeShop.latitude || "");
+      setValue("longitude", data.seeCoffeeShop.longitude || "");
+      setValue(
+        "categories",
+        data?.seeCoffeeShop?.categories
+          .map((category) => category.name)
+          .join(" ") || ""
+      );
+    }
+  }, [data, setValue]);
   return (
     <div>
       {data?.seeCoffeeShop ? <CoffeeShop {...data.seeCoffeeShop} /> : null}
