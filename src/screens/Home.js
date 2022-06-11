@@ -31,7 +31,6 @@ const Home = () => {
       offset: 0,
     },
   });
-  console.log(data);
   return (
     <div>
       {data?.seeCoffeeShops?.map((coffeeShop) => (

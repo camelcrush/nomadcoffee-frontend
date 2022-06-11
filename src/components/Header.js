@@ -1,8 +1,12 @@
+import { useReactiveVar } from "@apollo/client";
 import { faAdd, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { isLoggedInVar } from "../apollo";
+import useUser from "../hooks/useUser";
 import routes from "../routes";
+import Avatar from "./Avatar";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -19,6 +23,8 @@ const Icon = styled.span`
 `;
 
 const Header = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const { data } = useUser();
   return (
     <HeaderContainer>
       <Column></Column>
@@ -28,11 +34,18 @@ const Header = () => {
             <FontAwesomeIcon icon={faHome} size="lg" />
           </Link>
         </Icon>
-        <Icon>
-          <Link to={routes.add}>
-            <FontAwesomeIcon icon={faAdd} size="lg" />
-          </Link>
-        </Icon>
+        {isLoggedIn ? (
+          <>
+            <Icon>
+              <Link to={routes.add}>
+                <FontAwesomeIcon icon={faAdd} size="lg" />
+              </Link>
+            </Icon>
+            <Icon>
+              <Avatar url={data?.me?.avatarUrl} />
+            </Icon>
+          </>
+        ) : null}
       </Column>
     </HeaderContainer>
   );
