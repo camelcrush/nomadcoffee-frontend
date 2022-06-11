@@ -1,7 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import CoffeeShop from "../components/feed/CoffeeShop";
 
-const SEE_COFFEESHOPS_QUERY = gql`
+export const SEE_COFFEESHOPS_QUERY = gql`
   query seeCoffeeShops($offset: Int!) {
     seeCoffeeShops(offset: $offset) {
       id
@@ -28,9 +28,10 @@ const SEE_COFFEESHOPS_QUERY = gql`
 const Home = () => {
   const { data } = useQuery(SEE_COFFEESHOPS_QUERY, {
     variables: {
-      offset: 1,
+      offset: 0,
     },
   });
+  console.log(data);
   return (
     <div>
       {data?.seeCoffeeShops?.map((coffeeShop) => (

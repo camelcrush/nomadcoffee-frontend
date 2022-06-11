@@ -5,6 +5,7 @@ import Button from "../components/auth/Button";
 import FormError from "../components/auth/FormError";
 import Input from "../components/auth/Input";
 import routes from "../routes";
+import { SEE_COFFEESHOPS_QUERY } from "./Home";
 
 const CREATE_COFFESHOP_MUTATION = gql`
   mutation createCoffeeShop(
@@ -44,6 +45,9 @@ const AddCoffeeShop = () => {
     CREATE_COFFESHOP_MUTATION,
     {
       onCompleted,
+      refetchQueries: [
+        { query: SEE_COFFEESHOPS_QUERY, variables: { offset: 0 } },
+      ],
     }
   );
   const {
@@ -57,8 +61,9 @@ const AddCoffeeShop = () => {
     if (loading) {
       return;
     }
+    console.log(data.file[0]);
     addCoffeeShopMutation({
-      variables: { ...data, photos: data?.photos[0] },
+      variables: { ...data, file: data.file[0] },
     });
   };
   return (
@@ -90,7 +95,7 @@ const AddCoffeeShop = () => {
           type="text"
           placeholder="Categories"
         />
-        <Input {...register("photos")} name="photos" type="file" />
+        <Input {...register("file")} name="file" type="file" />
         <Button
           type="submit"
           value={loading ? "loading..." : "Add"}
