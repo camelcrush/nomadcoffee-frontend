@@ -18,6 +18,10 @@ const HeaderContainer = styled.div`
   padding: 18px 0px;
 `;
 const Column = styled.div``;
+const IconsContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 const Icon = styled.span`
   margin-left: 15px;
 `;
@@ -29,23 +33,25 @@ const Header = () => {
     <HeaderContainer>
       <Column></Column>
       <Column>
-        <Icon>
-          <Link to={routes.home}>
-            <FontAwesomeIcon icon={faHome} size="lg" />
-          </Link>
-        </Icon>
-        {isLoggedIn ? (
-          <>
-            <Icon>
-              <Link to={routes.add}>
-                <FontAwesomeIcon icon={faAdd} size="lg" />
-              </Link>
-            </Icon>
-            <Icon>
-              <Avatar url={data?.me?.avatarUrl} />
-            </Icon>
-          </>
-        ) : null}
+        <IconsContainer>
+          <Icon>
+            <Link to={routes.home}>
+              <FontAwesomeIcon icon={faHome} size="lg" />
+            </Link>
+          </Icon>
+          {isLoggedIn ? (
+            <>
+              <Icon>
+                <Link to={routes.add}>
+                  <FontAwesomeIcon icon={faAdd} size="lg" />
+                </Link>
+              </Icon>
+              <Icon>
+                <Avatar url={data?.me?.avatarUrl} />
+              </Icon>
+            </>
+          ) : null}
+        </IconsContainer>
       </Column>
     </HeaderContainer>
   );
